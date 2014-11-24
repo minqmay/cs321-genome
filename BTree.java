@@ -75,26 +75,7 @@ public class BTree{
                 x.addKey(obj,i);
                 x.setN(x.getN()+1);
             }
-            try {
-                raf.writeBoolean(x.isLeaf());
-                raf.writeInt(x.getN());
-                if (x != root)
-                    raf.writeInt(x.getParent());
-                else
-                    raf.skipBytes(8);
-                for (i = 0; i < x.getN(); i++){
-                    long data = x.getKey(i).getData();
-                    raf.writeLong(data);
-                    int frequency = x.getKey(i).getFrequency();
-                    raf.writeInt(frequency);
-                    raf.skipBytes(4);
-                }
-            }
-            catch (IOException ioe){
-                System.err.println("IO Exception occurred!");
-                System.exit(-1);
-            }
-            //disk_write(x);
+            writeNode(x,x.getOffset());
         }
         else {
             while (i >= 1 && (obj.compareTo(x.getKey(i-1)) < 0)){
@@ -103,7 +84,6 @@ public class BTree{
             if (i > 0 && obj.compareTo(x.getKey(i-1)) == 0){
                 x.getKey(i-1).increaseFrequency();
             }
-            //disk_read(getChild(i);
             System.out.println(x + " " + x.isLeaf());
             int offset = x.getChild(i);
             BTreeNode y = readNode(offset);
@@ -159,9 +139,6 @@ public class BTree{
             writeNode(z,placeToInsert);
             placeToInsert += BTreeNodeSize;
         }
-        //disk_write(y);
-        //disk_write(z);
-        //disk_write(x);
     }
     public TreeObject search(BTreeNode x, long k){
         int i = 0;
