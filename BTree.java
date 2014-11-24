@@ -20,7 +20,7 @@ public class BTree{
         this.degree = degree;
         BTreeNode x = new BTreeNode();
         root = x;
-        root.setOffset(placeToInsert);
+        root.setOffset(rootOffset);
         x.setIsLeaf(true);
         x.setN(0);
         try {
@@ -211,10 +211,7 @@ public class BTree{
                 raf.seek(offset);
                 raf.writeBoolean(n.isLeaf());
                 raf.writeInt(n.getN());
-                if (n != root)
-                    raf.writeInt(n.getParent());
-                else
-                    raf.skipBytes(8);
+                raf.writeInt(n.getParent());
                 for (i = 0; i < n.getN(); i++){
                     if (!n.isLeaf()){
                         raf.writeInt(n.getChild(i));
