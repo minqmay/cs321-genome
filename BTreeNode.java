@@ -77,4 +77,7 @@ public class BTreeNode{
         }
         return s;
     }
+    public LinkedList<Integer> getChildren(){
+        return children;
+    }
 }
