@@ -69,11 +69,13 @@ public class BTreeNode{
     }
     public String toString(){
         String s = new String();
+        s += "keys: ";
         for (int i = 0; i < keys.size(); i++){
-            s += ("keys: " + keys);
+            s += (keys.get(i) + " ");
         }
+        s += "\nchildren: ";
         for (int i = 0; i < children.size(); i++){
-            s += ("children: " + children);
+            s += (children.get(i) + " ");
         }
         return s;
     }
