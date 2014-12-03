@@ -90,17 +90,17 @@ public class BTree{
             int offset = x.getChild(i);
             BTreeNode y = readNode(offset);
             if (y.getN() == 2 * degree - 1){
-                i = y.getN();
-                while (i > 0 && obj.compareTo(y.getKey(i-1)) < 0){
-                    i--;
+                int j = y.getN();
+                while (j > 0 && obj.compareTo(y.getKey(j-1)) < 0){
+                    j--;
                 } 
-                if (i > 0 && obj.compareTo(y.getKey(i-1)) == 0){
-                    y.getKey(i-1).increaseFrequency();
+                if (j > 0 && obj.compareTo(y.getKey(j-1)) == 0){
+                    y.getKey(j-1).increaseFrequency();
                     writeNode(y,y.getOffset());
                     return;
                 }
                 else {
-                    i = x.getN();
+                    //i = x.getN();
                     splitChild(x, i, y);
                         if (obj.compareTo(x.getKey(i)) > 0) {
                             i++;
@@ -118,7 +118,7 @@ public class BTree{
         z.setParent(y.getParent());
         System.out.println("splitting " + y);
         for (int j = 0; j < degree - 1; j++){
-            System.out.println("moving " + y.getKey(degree) + " to z");
+            //System.out.println("moving " + y.getKey(degree) + " to z");
             z.addKey(y.removeKey(degree));
             System.out.println("z: " + z.getKeys());
             System.out.println("y: " + y.getKeys());
@@ -128,15 +128,16 @@ public class BTree{
         }
         if (!y.isLeaf()){
             for (int j = 0; j < degree; j++){
-                System.out.println("moving " + y.getChild(degree) + " to z");
+            //    System.out.println("moving " + y.getChild(degree) + " to z");
                 z.addChild(y.removeChild(degree));
-                System.out.println("z: " + z.getChildren());
-                System.out.println("y: " + y.getChildren());
+               // System.out.println("z: " + z.getChildren());
+               // System.out.println("y: " + y.getChildren());
             }
         }
-        System.out.println("moving " + y.getKey(degree - 1) + " to x.k["+i+"]");
+        //System.out.println("moving " + y.getKey(degree - 1) + " to x.k["+i+"]");
+        //System.out.println("x: " + x.getKeys());
         x.addKey(y.removeKey(degree - 1), i);
-        System.out.println("x: " + x.getKeys());
+        //System.out.println("x: " + x.getKeys());
         x.setN(x.getN()+1);
         y.setN(y.getN()-1);
         if (x == root){
@@ -180,6 +181,7 @@ public class BTree{
     }
     public void inOrderPrint(BTreeNode n){
         TreeObject obj = null;
+       // System.out.println(n);
         if (n.isLeaf() == true){
             for (int i = 0; i < n.getN(); i++){
                 System.out.println(n.getKey(i));
