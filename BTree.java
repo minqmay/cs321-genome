@@ -109,7 +109,6 @@ public class BTree{
                     i--;
                 } 
                 System.out.println("obj: " + obj);
-                System.out.println("checking: " + y.getKey(i-1));
                 if (i > 0 && obj.compareTo(y.getKey(i-1)) == 0){
                     System.out.println("increasing freq");
                     y.getKey(i-1).increaseFrequency();
@@ -175,12 +174,14 @@ public class BTree{
             x.addChild(z.getOffset(),i+1);
             writeNode(z,placeToInsert);
             writeNode(x,rootOffset);
+            placeToInsert += BTreeNodeSize;
         }
         else{
-            writeNode(x,x.getOffset());
             writeNode(y,y.getOffset());
             z.setOffset(placeToInsert);
             writeNode(z,placeToInsert);
+            x.addChild(z.getOffset(),i+1);
+            writeNode(x,x.getOffset());
             placeToInsert += BTreeNodeSize;
         }
     }
@@ -259,17 +260,19 @@ public class BTree{
                         System.out.println("writing obj 0");
                     }
                 }
+                if (i == n.getN() && !n.isLeaf()){
+                    raf.writeInt(n.getChild(i));
+                    System.out.println("writing last child: " + n.getChild(i));
+                }
                     //System.out.println("i: " + i);
-                    System.out.println("n.getN(): " + n.getN());
-                    System.out.println(2 * degree - 1);
-                if (n.getN() == (2 * degree - 1) && !n.isLeaf()){
-                    System.out.println("writing last child: " + n.getChild(i-1));
-                    raf.writeInt(n.getChild(i-1));
-                }
-                else {
-                    raf.writeInt(0);
-                    System.out.println("writing child 0");
-                }
+                //if (n.getN() == (2 * degree - 1) && !n.isLeaf()){
+                //    System.out.println("writing last child: " + n.getChild(i-1));
+                //    raf.writeInt(n.getChild(i-1));
+                //}
+                //else {
+                //    raf.writeInt(0);
+                //    System.out.println("writing child 0");
+                //}
             }
             catch (IOException ioe){
                 System.err.println("IO Exception occurred!");
@@ -300,8 +303,9 @@ public class BTree{
                     System.out.println("k: " + k);
                     System.out.println("reading child: " + child);
                 }
-                else if (k >= y.getN() || y.isLeaf()){
+                else if (k >= y.getN() + 1 || y.isLeaf()){
                     raf.seek(raf.getFilePointer() + 4);
+                    System.out.println("moving file pointer 4");
                 }
                 if (k < y.getN()){
                     long value = raf.readLong();
@@ -311,14 +315,19 @@ public class BTree{
                     System.out.println("reading key: " + obj);
                 }
             }
-            if (y.getN() == (2 * degree - 1) && !y.isLeaf()){
+            if (k == y.getN() && !y.isLeaf()){
                 int child = raf.readInt();
                 y.addChild(child);
                 System.out.println("reading last child: " + child);
             }
-            else if (k > y.getN()){
-                raf.seek(raf.getFilePointer() + 4);
-            }
+            //if (y.getN() == (2 * degree - 1) && !y.isLeaf()){
+            //    int child = raf.readInt();
+            //    y.addChild(child);
+            //    System.out.println("reading last child: " + child);
+            //}
+            //else if (k > y.getN()){
+            //    raf.seek(raf.getFilePointer() + 4);
+            //}
         }
         catch (IOException ioe){
             System.err.println(ioe.getMessage());
