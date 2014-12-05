@@ -71,8 +71,8 @@ public class GeneBankCreateBTree {
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found: "+gbk.getPath());
 		}
-		
-		BTree tree = new BTree(BTreeDegree,"test");
+	    String BTreeFile = (gbk + ".btree.data." + sequenceLength + "." + BTreeDegree);
+		BTree tree = new BTree(BTreeDegree, BTreeFile);
 		
 		String line = null;
 		line = in.readLine();
