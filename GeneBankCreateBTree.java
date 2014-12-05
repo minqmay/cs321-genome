@@ -45,12 +45,11 @@ public class GeneBankCreateBTree {
 		try {
 			int deg = Integer.parseInt(args[1]);
 			if (deg < 0) badUsage();
-			else if (deg == 0) BTreeDegree = DEFAULT_DEGREE;
+			else if (deg == 0) BTreeDegree = getOptimalDegree();
 			else BTreeDegree = deg;
 		} catch (NumberFormatException e) {
 			badUsage();
 		}
-				
 		int sequenceLength = 0;
 		
 		// <sequence length>
@@ -73,7 +72,7 @@ public class GeneBankCreateBTree {
 			System.err.println("File not found: "+gbk.getPath());
 		}
 		
-		BTree tree = new BTree(BTreeDegree);
+		BTree tree = new BTree(BTreeDegree,"test");
 		
 		String line = null;
 		line = in.readLine();
@@ -89,21 +88,22 @@ public class GeneBankCreateBTree {
 					try {
 						while (sequencePosition < sequenceLength) {
 							char c = line.charAt(charPosition++);
+                            System.out.println("c: " + c);
 							switch (c) {
 							case 'a':
-								sequence = (sequence<<2) | CODE_A;
+								sequence = ((sequence<<2) | CODE_A);
 								sequencePosition++;
 								break;
 							case 't':
-								sequence = (sequence<<2) | CODE_T;
+								sequence = ((sequence<<2) | CODE_T);
 								sequencePosition++;
 								break;
 							case 'c':
-								sequence = (sequence<<2) | CODE_C;
+								sequence = ((sequence<<2) | CODE_C);
 								sequencePosition++;
 								break;
 							case 'g':
-								sequence = (sequence<<2) | CODE_G;
+								sequence = ((sequence<<2) | CODE_G);
 								sequencePosition++;
 								break;
 							default: // space or number, not part of sequence
@@ -111,7 +111,7 @@ public class GeneBankCreateBTree {
 							}
 						}
 						// "reverse normalize" the sequence; start at the leftmost bit
-						sequence = sequence<<(64-(sequenceLength<<1));
+						//sequence = sequence<<(64-(sequenceLength<<1));
 						/* Since we have a max length of 31 we could encode the
 						 * length of the sequence in the long itself, e.g. you
 						 * could do this:
@@ -156,7 +156,19 @@ public class GeneBankCreateBTree {
 		System.err.println("[<cache size>]: if cache enabled, size of cache");
 		System.err.println("[<debug level>]: debugging level (0-1)");
 		System.exit(1);
-	}
+    }
+	public static int getOptimalDegree(){
+        double optimum;
+        int sizeOfPointer = 4;
+        int sizeOfObject = 12;
+        int sizeOfMetadata = 5;
+        double diskBlockSize = optimum = 4096;
+        optimum += sizeOfObject;
+        optimum -= sizeOfPointer;
+        optimum -= sizeOfMetadata;
+        optimum /= (2 * (sizeOfObject + sizeOfPointer));
+        return (int) Math.floor(optimum);
+    }
 }
 
 
