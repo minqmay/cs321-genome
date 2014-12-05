@@ -111,7 +111,7 @@ public class GeneBankCreateBTree {
 							}
 						}
 						// "reverse normalize" the sequence; start at the leftmost bit
-						//sequence = sequence<<(64-(sequenceLength<<1));
+						sequence = sequence<<(64-(sequenceLength<<1));
 						/* Since we have a max length of 31 we could encode the
 						 * length of the sequence in the long itself, e.g. you
 						 * could do this:
