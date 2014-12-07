@@ -35,6 +35,7 @@ public class BTree{
     }
     public void insert(long k){
         BTreeNode r = root;
+        System.out.println("inserting " + k);
         int i = r.getN();
         if (i == (2 * degree - 1)){
             TreeObject obj = new TreeObject(k);
@@ -129,7 +130,7 @@ public class BTree{
         x.addKey(y.removeKey(degree - 1), i);
         x.setN(x.getN()+1);
         y.setN(y.getN()-1);
-        if (x == root){
+        if (x == root && x.getN() == 1){
             writeNode(y,placeToInsert);
             placeToInsert += BTreeNodeSize;
             z.setOffset(placeToInsert);
@@ -167,6 +168,7 @@ public class BTree{
     }
     public void inOrderPrint(BTreeNode n){
         TreeObject obj = null;
+        System.out.println(n);
         if (n.isLeaf() == true){
             for (int i = 0; i < n.getN(); i++){
                 System.out.println(n.getKey(i));
