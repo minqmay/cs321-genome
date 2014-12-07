@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -10,6 +11,7 @@ import java.io.IOException;
  * @author andrew
  *
  */
+// TODO: use cache.
 public class GeneBankCreateBTree {
 	
 	public static final int CODE_A = 0b00;
@@ -20,8 +22,6 @@ public class GeneBankCreateBTree {
 	public static final int MAX_SEQUENCE_LENGTH = 31;
 	public static final int MAX_DEBUG_LEVEL = 1;
 	
-	public static final int DEFAULT_DEGREE = 80; // TODO: determine optimal degree
-
 	public static void main(String[] args) throws IOException {
 		if (args.length < 4) {
 			badUsage();
@@ -59,6 +59,31 @@ public class GeneBankCreateBTree {
 			else sequenceLength = len;
 		} catch (NumberFormatException e) {
 			badUsage();
+		}
+		
+		// [<cache size>] [<debug level>]
+		int cacheSize = 0;
+		int debugLevel = 0;
+		
+		if (args.length > 4) {
+			if (useCache) {
+				try {
+					int csize = Integer.parseInt(args[4]);
+					if (csize < 1) badUsage();
+					else cacheSize = csize;
+				} catch (NumberFormatException e) {
+					badUsage();
+				}
+			}
+			if (!useCache || args.length > 5) {
+				try {
+					int dlevel = Integer.parseInt(useCache ? args[5] : args[4]);
+					if (dlevel < 0 || dlevel > MAX_DEBUG_LEVEL) badUsage();
+					else debugLevel = dlevel;
+				} catch (NumberFormatException e) {
+					badUsage();
+				}
+			}
 		}
 		
 		// <gbk file>
@@ -147,6 +172,16 @@ public class GeneBankCreateBTree {
 			// not bothering with the rest of the fields for now
 			line = in.readLine();
 		}
+		// print debug dump
+		if (debugLevel > 0) {
+			File dumpFile = new File("dump");
+			dumpFile.delete();
+			dumpFile.createNewFile();
+			FileWriter writer = new FileWriter(dumpFile);
+			tree.inOrderPrintToWriter(tree.getRoot(),writer);
+			writer.close();
+		}
+		
 	    tree.inOrderPrint(tree.getRoot());	
 		in.close();
 	}

@@ -1,3 +1,4 @@
+import java.io.FileWriter;
 import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -181,6 +182,33 @@ public class BTree{
             inOrderPrint(y);
             if (i < n.getN())
                 System.out.println(n.getKey(i));
+        }
+    }
+    /**
+     * Write an in-order traversal of the tree to a FileWriter.
+     * 
+     * @param n BTreeNode to traverse
+     * @param writer FileWriter to write to
+     * @throws IOException
+     */
+    public void inOrderPrintToWriter(BTreeNode n,FileWriter writer) throws IOException {
+        writer.append(n.toString());
+        writer.append('\n');
+        if (n.isLeaf() == true){
+            for (int i = 0; i < n.getN(); i++){
+                writer.append(n.getKey(i).toString());
+                writer.append('\n');
+            }
+            return;
+        }
+        for (int i = 0; i < n.getN() + 1; ++i){
+            int offset = n.getChild(i);
+            BTreeNode y = readNode(offset);
+            inOrderPrintToWriter(y,writer);
+            if (i < n.getN()) {
+                writer.append(n.getKey(i).toDNAString());
+                writer.append('\n');
+            }
         }
     }
     public BTreeNode getRoot(){
