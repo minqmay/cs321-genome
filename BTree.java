@@ -192,23 +192,20 @@ public class BTree{
      * @throws IOException
      */
     public void inOrderPrintToWriter(BTreeNode n,FileWriter writer) throws IOException {
-        writer.append(n.toString());
-        writer.append('\n');
-        if (n.isLeaf() == true){
-            for (int i = 0; i < n.getN(); i++){
-                writer.append(n.getKey(i).toString());
-                writer.append('\n');
-            }
-            return;
+        for (int i = 0; i < n.getN(); i++){
+            writer.append(n.getKey(i).toDNAString());
+            writer.append('\n');
         }
-        for (int i = 0; i < n.getN() + 1; ++i){
-            int offset = n.getChild(i);
-            BTreeNode y = readNode(offset);
-            inOrderPrintToWriter(y,writer);
-            if (i < n.getN()) {
-                writer.append(n.getKey(i).toDNAString());
-                writer.append('\n');
-            }
+        if (!n.isLeaf()){
+	        for (int i = 0; i < n.getN() + 1; ++i){
+	            int offset = n.getChild(i);
+	            BTreeNode y = readNode(offset);
+	            inOrderPrintToWriter(y,writer);
+	            if (i < n.getN()) {
+	                writer.append(n.getKey(i).toDNAString());
+	                writer.append('\n');
+	            }
+	        }
         }
     }
     public BTreeNode getRoot(){
