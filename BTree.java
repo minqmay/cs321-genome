@@ -11,12 +11,13 @@ public class BTree{
     private RandomAccessFile raf;
     private File myfile;
     private int placeToInsert;
-    private final int rootOffset = 12;
-    private final int BTreeNodeSize;
+    private int rootOffset;
+    private int BTreeNodeSize;
 
-    public BTree(int degree, String fileName){
+    public BTree(int degree, String fileName, boolean useCache, int cacheSize){
 
         BTreeNodeSize = 32*degree-3;
+        rootOffset = 12;
         placeToInsert = rootOffset + BTreeNodeSize;
         this.degree = degree;
         BTreeNode x = new BTreeNode();
@@ -33,6 +34,18 @@ public class BTree{
             System.exit(-1);
         }
         writeTreeMetadata();
+    }
+    public BTree(int degree, File fileName, boolean useCache, int cacheSize){
+        
+        try {
+            raf = new RandomAccessFile(fileName, "r");
+        }
+        catch (FileNotFoundException fnfe){
+            System.err.println("file is corrupt or missing!");
+            System.exit(-1);
+        }
+        readTreeMetadata();
+        root = readNode(rootOffset);
     }
     public void insert(long k){
         BTreeNode r = root;
@@ -151,7 +164,9 @@ public class BTree{
     }
     public TreeObject search(BTreeNode x, long k){
         int i = 0;
+        System.out.println("searching for: " + k);
         TreeObject obj = new TreeObject(k);
+        System.out.println(x);
         while (i < x.getN() && (obj.compareTo(x.getKey(i)) > 0)){
             i++;
         }
@@ -287,6 +302,18 @@ public class BTree{
             raf.writeInt(degree);
             raf.writeInt(32*degree-3);
             raf.writeInt(12);
+        }
+        catch (IOException ioe){
+            System.err.println("IO Exception occurred!");
+            System.exit(-1);
+        }
+    }
+    public void readTreeMetadata(){
+        try {
+            raf.seek(0);
+            degree = raf.readInt();
+            BTreeNodeSize = raf.readInt();
+            rootOffset = raf.readInt();
         }
         catch (IOException ioe){
             System.err.println("IO Exception occurred!");
