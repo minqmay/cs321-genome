@@ -40,16 +40,16 @@ public class TreeObject implements Comparable{
     	StringBuilder s = new StringBuilder();
     	for (int i = 62; i >= 0; i-=2) {
     		switch ((int)((l>>i) & 0b11)) {
-    			case GeneBankCreateBTree.CODE_A:
+    			case (int)GeneBankCreateBTree.CODE_A:
     				s.append('a');
     				break;
-    			case GeneBankCreateBTree.CODE_C:
+    			case (int)GeneBankCreateBTree.CODE_C:
     				s.append('c');
     				break;
-    			case GeneBankCreateBTree.CODE_T:
+    			case (int)GeneBankCreateBTree.CODE_T:
     				s.append('t');
     				break;
-    			case GeneBankCreateBTree.CODE_G:
+    			case (int)GeneBankCreateBTree.CODE_G:
     				s.append('g');
     				break;
     		}
