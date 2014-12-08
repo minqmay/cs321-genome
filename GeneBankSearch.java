@@ -61,23 +61,28 @@ public class GeneBankSearch {
 
 		int degree = Integer.parseInt(deg);
 		int sequence = Integer.parseInt(seq);
-		System.out.println("degree: " + degree);
-		System.out.println("sequence length: " + sequence);
+		//System.out.println("degree: " + degree);
+		//System.out.println("sequence length: " + sequence);
 		
 		try {
 			GeneBankConvert gbc = new GeneBankConvert();
-			BTree tree = new BTree(degree);
+			BTree tree = new BTree(degree, btreeFile, useCache, cacheSize);
 			Scanner scan = new Scanner(new File(queryFile));
 			
 			while(scan.hasNext()) {
 				String query = scan.nextLine(); //sequence to search for
 				
-				long temp = gbc.convertStringToLong(query);
-				System.out.println(temp);
-				String converted = gbc.convertLongToString(temp, sequence);
-				System.out.println(converted);
+				long q = gbc.convertStringToLong(query);
+				//System.out.println(q);
+				//String converted = gbc.convertLongToString(q, sequence);
+				//System.out.println(converted);
+				TreeObject result = tree.search(tree.getRoot(), q);
 				
+				if(result != null) 
+					System.out.println(gbc.convertLongToString(result.getData(), Integer.parseInt(seq))+": "+ result.getFrequency());
 			}
+			
+			scan.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
