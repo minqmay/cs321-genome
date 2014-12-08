@@ -13,6 +13,7 @@ public class BTree{
     private int placeToInsert;
     private int rootOffset;
     private int BTreeNodeSize;
+    private BTreeCache cache;
 
     public BTree(int degree, String fileName, boolean useCache, int cacheSize){
 
@@ -20,6 +21,11 @@ public class BTree{
         rootOffset = 12;
         placeToInsert = rootOffset + BTreeNodeSize;
         this.degree = degree;
+        
+        if (useCache) {
+        	cache = new BTreeCache(cacheSize);
+        }
+        
         BTreeNode x = new BTreeNode();
         root = x;
         root.setOffset(rootOffset);
@@ -256,9 +262,19 @@ public class BTree{
                 System.err.println("IO Exception occurred!");
                 System.exit(-1);
             }
+            
+            // cache the node
+            if (cache != null) cache.add(n, offset);
     }
     public BTreeNode readNode(int offset){
-        BTreeNode y = new BTreeNode();
+    	
+    	BTreeNode y = null;
+    	
+    	// if node is cached, we can just read it from there
+        if (cache != null) y = cache.readNode(offset);
+        if (y != null) return y;
+        
+        y = new BTreeNode();
         TreeObject obj = null;
         y.setOffset(offset);
         int k = 0;
@@ -294,6 +310,7 @@ public class BTree{
             System.err.println(ioe.getMessage());
             System.exit(-1);
         }
+        
         return y;
     }
     public void writeTreeMetadata(){

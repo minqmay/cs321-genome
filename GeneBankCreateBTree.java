@@ -11,7 +11,6 @@ import java.io.IOException;
  * @author andrew
  *
  */
-// TODO: use cache.
 public class GeneBankCreateBTree {
 	
 	public static final long CODE_A = 0b00L;
