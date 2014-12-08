@@ -1,4 +1,4 @@
-public class TreeObject implements Comparable{
+public class TreeObject implements Comparable<TreeObject>{
     private int frequency;
     private long data;
 
@@ -19,8 +19,7 @@ public class TreeObject implements Comparable{
     public long getData(){
         return data;
     }
-    public int compareTo(Object o){
-        TreeObject that = (TreeObject)o;
+    public int compareTo(TreeObject that){
         if (this.data < that.data)
             return -1;
         else if (this.data > that.data)
