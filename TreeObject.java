@@ -36,7 +36,7 @@ public class TreeObject implements Comparable<TreeObject>{
     	return "key: " + longToSequence(data) + " frequency: " + frequency;
     }
     private String longToSequence(long l) {
-    	StringBuilder s = new StringBuilder();
+    	StringBuilder s = new StringBuilder(32);
     	for (int i = 62; i >= 0; i-=2) {
     		switch ((int)((l>>i) & 0b11)) {
     			case (int)GeneBankCreateBTree.CODE_A:
