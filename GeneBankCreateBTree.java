@@ -99,78 +99,85 @@ public class GeneBankCreateBTree {
 	    String BTreeFile = (gbk + ".btree.data." + sequenceLength + "." + BTreeDegree);
 		BTree tree = new BTree(BTreeDegree, BTreeFile);
 		
-		String line = null;
-		line = in.readLine().toLowerCase();
+        String line = null;
+		line = in.readLine().toLowerCase().trim();
 		boolean inSequence = false;
 		int sequencePosition = 0;
 		int charPosition = 0;
 		long sequence = 0L;
-		while (line != null) { // tried to optimize this, mostly made it ugly
-			if (inSequence) {
-				if (line.startsWith("//")) { // marks the end of the sequence
-					inSequence = false;
-				} else {
-					try {
+        
+        GeneBankConvert gbc = new GeneBankConvert();
+        while (line != null) { // tried to optimize this, mostly made it ugly
+            if (inSequence) {
+                if (line.startsWith("//")) { // marks the end of the sequence
+                    inSequence = false;
+                } else {
+                    try {
                         System.out.println(line);
                         for (int i = 0; i < line.length(); i++){
-						while (sequencePosition < sequenceLength) {
-							char c = line.charAt(charPosition++);
-							switch (c) {
-							case 'a':
-								sequence = ((sequence<<2) | CODE_A);
-								sequencePosition++;
-								break;
-							case 't':
-								sequence = ((sequence<<2) | CODE_T);
-								sequencePosition++;
-								break;
-							case 'c':
-								sequence = ((sequence<<2) | CODE_C);
-								sequencePosition++;
-								break;
-							case 'g':
-								sequence = ((sequence<<2) | CODE_G);
-								sequencePosition++;
-								break;
-                            case 'n':
-                                sequencePosition = 0;
-                                break;
-							default: // space or number, not part of sequence
-								break;
-							}
-						}
-						// "reverse normalize" the sequence; start at the leftmost bit
-						//sequence = sequence<<(64-(sequenceLength<<1));
-						/* Since we have a max length of 31 we could encode the
-						 * length of the sequence in the long itself, e.g. you
-						 * could do this:
-						 * - if last two bits are 11, 10, or 01, sequence length
-						 *   is 31, 30, or 29
-						 * - if last two bits are 00, sequence length is encoded
-						 *   in the previous 6 bits (which we know are free
-						 *   because the length is shorter than 29)
-						 *   
-						 * In the context of this assignment there is not really
-						 * any reason to do that since all the sequences in a
-						 * tree are the same length - and bit manipulation on
-						 * longs in Java is crappy performance-wise.
-						 */
-						tree.insert(sequence);
-						// TODO: write to disk.
-						sequencePosition = 0;
-					    sequence = 0;	
-						}
-					} catch (IndexOutOfBoundsException e) {
-						charPosition = 0;
-						// just read the next line
-						// (this is supposed to be an optimization)
-					}
-				}
-			} else if (line.startsWith("ORIGIN")) { // marks the beginning of a sequence
-				inSequence = true;
+                            charPosition = i;
+                            while (sequencePosition < sequenceLength) {
+                                char c = line.charAt(charPosition++);
+                                System.out.println("c: " + c);
+                                switch (c) {
+                                case 'a':
+                                    sequence = ((sequence<<2) | CODE_A);
+                                    sequencePosition++;
+                                    break;
+                                case 't':
+                                    sequence = ((sequence<<2) | CODE_T);
+                                    sequencePosition++;
+                                    break;
+                                case 'c':
+                                    sequence = ((sequence<<2) | CODE_C);
+                                    sequencePosition++;
+                                    break;
+                                case 'g':
+                                    sequence = ((sequence<<2) | CODE_G);
+                                    sequencePosition++;
+                                    break;
+                                case 'n':
+                                    sequencePosition = 0;
+                                    break;
+                                default: // space or number, not part of sequence
+                                    break;
+                                }
+                            }
+                            tree.insert(sequence);
+                            sequencePosition = 0;
+                            sequence = 0;
+                        }
+                        // "reverse normalize" the sequence; start at the leftmost bit
+                        // sequence = sequence<<(64-(sequenceLength<<1));
+                        /* Since we have a max length of 31 we could encode the
+                        * length of the sequence in the long itself, e.g. you
+                        * could do this:
+                        * - if last two bits are 11, 10, or 01, sequence length
+                        *   is 31, 30, or 29
+                        * - if last two bits are 00, sequence length is encoded
+                        *   in the previous 6 bits (which we know are free
+                        *   because the length is shorter than 29)
+                        *   
+                        * In the context of this assignment there is not really
+                        * any reason to do that since all the sequences in a
+                        * tree are the same length - and bit manipulation on
+                        * longs in Java is crappy performance-wise.
+                        */
+                        sequencePosition = 0;
+                        sequence = 0;
+                    } catch (IndexOutOfBoundsException e) {
+                            charPosition = 0; 
+                            // just read the next line
+                            // (this is supposed to be an optimization)
+                    }
+                }
+            }
+			else if (line.startsWith("ORIGIN")) { // marks the beginning of a sequence
+			System.out.println("sequence beginning");    
+            inSequence = true;
 			}
-			// not bothering with the rest of the fields for now
-			line = in.readLine();
+            // not bothering with the rest of the fields for now
+            line = in.readLine();
 		}
 		// print debug dump
 		if (debugLevel > 0) {
