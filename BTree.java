@@ -189,7 +189,6 @@ public class BTree{
         }
     }
     public void inOrderPrint(BTreeNode n){
-        TreeObject obj = null;
         System.out.println(n);
         if (n.isLeaf() == true){
             for (int i = 0; i < n.getN(); i++){
