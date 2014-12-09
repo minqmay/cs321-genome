@@ -2,7 +2,7 @@ import java.util.Random;
 public class BTreeTest{
     private static Random numGen;
     public static void main(String[] args){
-        BTree mbt = new BTree(128,"test1");
+        BTree mbt = new BTree(128,"test1",true,100);
         numGen = new Random();
         for (int i = 1; i < 1000; i++){
             mbt.insert(i);
@@ -18,7 +18,7 @@ public class BTreeTest{
             System.err.println("search failed!");
         }
         long[] keys = new long[100];
-        mbt = new BTree(2,"test2");
+        mbt = new BTree(2,"test2",true,100);
         for (int i = 0; i < 100; i++){
             int num = numGen.nextInt(15);
             mbt.insert(num);
