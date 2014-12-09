@@ -112,39 +112,34 @@ public class GeneBankCreateBTree {
                     sequence = 0;
                     sequencePosition = 0;
                 } else {
-                    System.out.println(line);
                 	while (charPosition < line.length()) {
                         char c = line.charAt(charPosition++);
                         switch (c) {
 	                        case 'a':
 	                            sequence = ((sequence<<2) | CODE_A);
-	                            sequencePosition++;
+	                            if (sequencePosition < sequenceLength) sequencePosition++;
 	                            break;
 	                        case 't':
 	                            sequence = ((sequence<<2) | CODE_T);
-	                            sequencePosition++;
+	                            if (sequencePosition < sequenceLength) sequencePosition++;
 	                            break;
 	                        case 'c':
 	                            sequence = ((sequence<<2) | CODE_C);
-	                            sequencePosition++;
+	                            if (sequencePosition < sequenceLength) sequencePosition++;
 	                            break;
 	                        case 'g':
 	                            sequence = ((sequence<<2) | CODE_G);
-	                            sequencePosition++;
+	                            if (sequencePosition < sequenceLength) sequencePosition++;
 	                            break;
-	                        case 'n':
+	                        case 'n': // end of subsequence
 	                            sequencePosition = 0;
                                 sequence = 0;
 	                            break;
 	                        default: // space or number, not part of sequence
 	                            break;
                         }
-                        if (sequencePosition == sequenceLength) {
-	                        // we completed a sequence
-	                        tree.insert(sequence);
-	                        sequencePosition = 0;
-	                        sequence = 0;
-                            charPosition = charPosition - sequenceLength + 1;
+                        if (sequencePosition >= sequenceLength) {
+	                        tree.insert(sequence & (~(0xffffffffffffffffL<<(sequenceLength<<1))));
                         }
                 	}
                 }
@@ -165,7 +160,7 @@ public class GeneBankCreateBTree {
 			writer.close();
 		}
 		
-	    tree.inOrderPrint(tree.getRoot());	
+	    //tree.inOrderPrint(tree.getRoot());	
 		in.close();
 	}
 	
