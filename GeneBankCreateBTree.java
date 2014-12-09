@@ -110,14 +110,16 @@ public class GeneBankCreateBTree {
                 if (line.startsWith("//")) { // marks the end of the sequence
                     inSequence = false;
                     if (sequencePosition > 0) {
-	                    // insert our partial sequence
+	                    //insert our partial sequence
 	                    tree.insert(sequence);
 	                    sequencePosition = 0;
 	                    sequence = 0;
                     }
                 } else {
+                    System.out.println(line);
                 	while (charPosition < line.length()) {
                         char c = line.charAt(charPosition++);
+                        System.out.println("c: " + c);
                         switch (c) {
 	                        case 'a':
 	                            sequence = ((sequence<<2) | CODE_A);
@@ -146,6 +148,7 @@ public class GeneBankCreateBTree {
 	                        tree.insert(sequence);
 	                        sequencePosition = 0;
 	                        sequence = 0;
+                            charPosition = charPosition - sequenceLength + 1;
                         }
                 	}
                 }
