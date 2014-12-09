@@ -134,9 +134,9 @@ public class GeneBankCreateBTree {
 	                        case 'n': // end of subsequence
 	                            sequencePosition = 0;
                                 sequence = 0;
-	                            break;
+	                            continue;
 	                        default: // space or number, not part of sequence
-	                            break;
+	                            continue;
                         }
                         if (sequencePosition >= sequenceLength) {
 	                        tree.insert(sequence & (~(0xffffffffffffffffL<<(sequenceLength<<1))));
