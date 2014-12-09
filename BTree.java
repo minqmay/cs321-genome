@@ -55,7 +55,7 @@ public class BTree{
     }
     public void insert(long k){
         BTreeNode r = root;
-        System.out.println("inserting " + k);
+        //System.out.println("inserting " + k);
         int i = r.getN();
         if (i == (2 * degree - 1)){
             TreeObject obj = new TreeObject(k);
