@@ -160,6 +160,9 @@ public class GeneBankCreateBTree {
 			writer.close();
 		}
 		
+		// we're done modifying the tree, finalize it
+		if (useCache) tree.flushCache();
+		
 	    //tree.inOrderPrint(tree.getRoot());	
 		in.close();
 	}

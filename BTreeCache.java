@@ -1,6 +1,7 @@
+import java.util.Iterator;
 import java.util.LinkedList;
 
-public class BTreeCache{
+public class BTreeCache implements Iterable<BTreeCacheNode>{
 
     private final int MAX_SIZE;
     private int numHits, numMisses;
@@ -18,16 +19,19 @@ public class BTreeCache{
     }
     
     /**
-     * Add a node to the BTreeCache. 
+     * Add a node to the BTreeCache. If this causes a node to fall off the list,
+     * that cache node will be returned; otherwise null is returned.
      * 
      * @param o the BTreeNode to add
      * @param o the offset of the node in the file
      */
-    public void add(BTreeNode o,int offset){
+    public BTreeCacheNode add(BTreeNode o,int offset){
+    	BTreeCacheNode rnode = null;
         if (isFull()){
-            list.removeLast();
+            rnode = list.removeLast();
         }
         list.addFirst(new BTreeCacheNode(o,offset));
+        return rnode;
     }
     
     /**
@@ -123,4 +127,9 @@ public class BTreeCache{
     public boolean isFull(){
         return getSize() == MAX_SIZE;
     }
+
+	@Override
+	public Iterator<BTreeCacheNode> iterator() {
+		return list.iterator();
+	}
 }                                                                                                                                                                     

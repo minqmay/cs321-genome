@@ -238,45 +238,53 @@ public class BTree{
         return root;
     }
     public void writeNode(BTreeNode n, int offset){
-            int i = 0;
-            try {
-                writeNodeMetadata(n,n.getOffset());
-                raf.writeInt(n.getParent());
-                for (i = 0; i < 2 * degree - 1; i++){
-                    if (i < n.getN() + 1 && !n.isLeaf()){
-                        raf.writeInt(n.getChild(i));
-                    }
-                    else if (i >= n.getN() + 1 || n.isLeaf()){
-                        raf.writeInt(0);
-                    }
-                    if (i < n.getN()){
-                        long data = n.getKey(i).getData();
-                        raf.writeLong(data);
-                        int frequency = n.getKey(i).getFrequency();
-                        raf.writeInt(frequency);
-                    }
-                    else if (i >= n.getN() || n.isLeaf()){
-                        raf.writeLong(0);
-                    }
-                }
-                if (i == n.getN() && !n.isLeaf()){
+        if (cache != null) {
+        	BTreeCacheNode cnode = cache.add(n, offset);
+        	// if a node was pushed off, write it
+        	if (cnode != null) writeNodeToFile(cnode.getData(),cnode.getOffset());
+        } else {
+        	writeNodeToFile(n, offset);
+        }
+    }
+    
+    private void writeNodeToFile(BTreeNode n, int offset) {
+        int i = 0;
+        try {
+            writeNodeMetadata(n,n.getOffset());
+            raf.writeInt(n.getParent());
+            for (i = 0; i < 2 * degree - 1; i++){
+                if (i < n.getN() + 1 && !n.isLeaf()){
                     raf.writeInt(n.getChild(i));
                 }
+                else if (i >= n.getN() + 1 || n.isLeaf()){
+                    raf.writeInt(0);
+                }
+                if (i < n.getN()){
+                    long data = n.getKey(i).getData();
+                    raf.writeLong(data);
+                    int frequency = n.getKey(i).getFrequency();
+                    raf.writeInt(frequency);
+                }
+                else if (i >= n.getN() || n.isLeaf()){
+                    raf.writeLong(0);
+                }
             }
-            catch (IOException ioe){
-                System.err.println("IO Exception occurred!");
-                System.exit(-1);
+            if (i == n.getN() && !n.isLeaf()){
+                raf.writeInt(n.getChild(i));
             }
-            
-            // cache the node
-            //if (cache != null) cache.add(n, offset);
+        }
+        catch (IOException ioe){
+            System.err.println("IO Exception occurred!");
+            System.exit(-1);
+        }
     }
+    
     public BTreeNode readNode(int offset){
     	
     	BTreeNode y = null;
     	
     	// if node is cached, we can just read it from there
-        //if (cache != null) y = cache.readNode(offset);
+        if (cache != null) y = cache.readNode(offset);
         if (y != null) return y;
         
         y = new BTreeNode();
@@ -352,5 +360,14 @@ public class BTree{
             System.err.println("IO Exception occurred!");
             System.exit(-1);
         }
+    }
+    
+    /**
+     * Write the contents of the cache to file on disk.
+     */
+    public void flushCache() {
+    	if (cache != null) {
+    		for (BTreeCacheNode cnode : cache) writeNodeToFile(cnode.getData(),cnode.getOffset());
+    	}
     }
 }
