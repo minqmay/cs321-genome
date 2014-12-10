@@ -1,12 +1,12 @@
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class BTreeCache implements Iterable<BTreeCacheNode>{
+public class BTreeCache implements Iterable<BTreeNode>{
 
     private final int MAX_SIZE;
     private int numHits, numMisses;
 
-    private LinkedList<BTreeCacheNode> list;
+    private LinkedList<BTreeNode> list;
 
     /**
      * Create a new BTreeCache of the specified capacity.
@@ -15,7 +15,7 @@ public class BTreeCache implements Iterable<BTreeCacheNode>{
      */
     public BTreeCache(int MAX_SIZE){
         this.MAX_SIZE = MAX_SIZE;
-        list = new LinkedList<BTreeCacheNode>();
+        list = new LinkedList<BTreeNode>();
     }
     
     /**
@@ -25,12 +25,12 @@ public class BTreeCache implements Iterable<BTreeCacheNode>{
      * @param o the BTreeNode to add
      * @param o the offset of the node in the file
      */
-    public BTreeCacheNode add(BTreeNode o,int offset){
-    	BTreeCacheNode rnode = null;
+    public BTreeNode add(BTreeNode o,int offset){
+    	BTreeNode rnode = null;
         if (isFull()){
             rnode = list.removeLast();
         }
-        list.addFirst(new BTreeCacheNode(o,offset));
+        list.addFirst(o);
         return rnode;
     }
     
@@ -50,14 +50,14 @@ public class BTreeCache implements Iterable<BTreeCacheNode>{
      * @return the node at offset, or null if the node was not in the cache
      */
     public BTreeNode readNode(int offset) {
-    	for (BTreeCacheNode n : list) {
+    	for (BTreeNode n : list) {
     		if (n.getOffset() == offset) {
     			// XXX: crap performance here since we traverse the list again
     			// just to remove the node...
     			list.remove(n);
     			list.addFirst(n);
     			increaseNumHits();
-    			return n.getData();
+    			return n;
     		}
     	}
     	// we went through the whole list without finding it
@@ -129,7 +129,7 @@ public class BTreeCache implements Iterable<BTreeCacheNode>{
     }
 
 	@Override
-	public Iterator<BTreeCacheNode> iterator() {
+	public Iterator<BTreeNode> iterator() {
 		return list.iterator();
 	}
 }                                                                                                                                                                     

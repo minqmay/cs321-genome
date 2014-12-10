@@ -239,9 +239,9 @@ public class BTree{
     }
     public void writeNode(BTreeNode n, int offset){
         if (cache != null) {
-        	BTreeCacheNode cnode = cache.add(n, offset);
+        	BTreeNode cnode = cache.add(n, offset);
         	// if a node was pushed off, write it
-        	if (cnode != null) writeNodeToFile(cnode.getData(),cnode.getOffset());
+        	if (cnode != null) writeNodeToFile(cnode,cnode.getOffset());
         } else {
         	writeNodeToFile(n, offset);
         }
@@ -367,7 +367,7 @@ public class BTree{
      */
     public void flushCache() {
     	if (cache != null) {
-    		for (BTreeCacheNode cnode : cache) writeNodeToFile(cnode.getData(),cnode.getOffset());
+    		for (BTreeNode cnode : cache) writeNodeToFile(cnode,cnode.getOffset());
     	}
     }
 }
