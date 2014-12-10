@@ -66,7 +66,7 @@ public class GeneBankSearch {
 		
 		try {
 			GeneBankConvert gbc = new GeneBankConvert();
-			BTree tree = new BTree(degree, btreeFile, useCache, cacheSize);
+			BTree tree = new BTree(degree, new File(btreeFile), useCache, cacheSize);
 			Scanner scan = new Scanner(new File(queryFile));
 			
 			while(scan.hasNext()) {

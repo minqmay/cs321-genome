@@ -170,9 +170,9 @@ public class BTree{
     }
     public TreeObject search(BTreeNode x, long k){
         int i = 0;
-        System.out.println("searching for: " + k);
+        //System.out.println("searching for: " + k);
         TreeObject obj = new TreeObject(k);
-        System.out.println(x);
+        //System.out.println(x);
         while (i < x.getN() && (obj.compareTo(x.getKey(i)) > 0)){
             i++;
         }
