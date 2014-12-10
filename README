@@ -53,6 +53,51 @@ Compiling and running:
     GeneBankSearch will print a summary of the search results showing how many
     times each sequence was found.
 
+Timing results:
+  Note: these were run on Andrew's home computer.
+
+  GeneBankCreateBTree:
+    $ time java GeneBankCreateBTree 0 0 data/test3.gbk 7
+    real        2m0.066s
+    user        0m29.182s
+    sys         1m30.883s
+
+    $ time java GeneBankCreateBTree 1 0 data/test3.gbk 7 100
+    real        1m24.996s
+    user        0m14.698s
+    sys         1m10.364s
+
+    $ time java GeneBankCreateBTree 1 0 data/test3.gbk 7 500
+    real        1m19.251s
+    user        0m13.862s
+    sys         1m5.450s
+
+    The cache is a significant improvement over no cache, but size 500 isn't
+    much better than 100.
+
+  GeneBankSearch:
+    $ time java GeneBankSearch 0 data/test3.gbk.btree.data.7.128 queries/query7 > /dev/null
+    real        0m23.219s
+    user        0m10.074s
+    sys         0m13.413s
+
+    $ time java GeneBankSearch 1 data/test3.gbk.btree.data.7.128 queries/query7 100 > /dev/null
+    real        0m23.096s
+    user        0m10.309s
+    sys         0m13.270s
+
+    $ time java GeneBankSearch 1 data/test3.gbk.btree.data.7.128 queries/query7 500 > asdf
+    real        0m23.646s
+    user        0m10.505s
+    sys         0m13.604s
+
+    The cache does not appear to be a very significant improvement here, but
+    this makes sense considering GeneBankSearch, unlike GeneBankCreateBTree,
+    does not perform any writes.
+
+  (The efficiency of using a linked list for the cache in the first place is
+  also questionable.)
+
 Explanation of the BTree file format:
 
     First, the BTree writes its metadata to the disk. This metadata is the 
