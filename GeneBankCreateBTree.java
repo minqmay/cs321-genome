@@ -2,7 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.IOException;
 
 /**
@@ -155,8 +155,8 @@ public class GeneBankCreateBTree {
 			File dumpFile = new File("dump");
 			dumpFile.delete();
 			dumpFile.createNewFile();
-			FileWriter writer = new FileWriter(dumpFile);
-			tree.inOrderPrintToWriter(tree.getRoot(),writer);
+			PrintWriter writer = new PrintWriter(dumpFile);
+			tree.inOrderPrintToWriter(tree.getRoot(),writer,sequenceLength);
 			writer.close();
 		}
 		

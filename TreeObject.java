@@ -32,27 +32,4 @@ public class TreeObject implements Comparable<TreeObject>{
         s += "key: " + data + " frequency: " + frequency;
         return s;
     }
-    public String toDNAString(){
-    	return "key: " + longToSequence(data) + " frequency: " + frequency;
-    }
-    private String longToSequence(long l) {
-    	StringBuilder s = new StringBuilder(32);
-    	for (int i = 62; i >= 0; i-=2) {
-    		switch ((int)((l>>i) & 0b11)) {
-    			case (int)GeneBankCreateBTree.CODE_A:
-    				s.append('a');
-    				break;
-    			case (int)GeneBankCreateBTree.CODE_C:
-    				s.append('c');
-    				break;
-    			case (int)GeneBankCreateBTree.CODE_T:
-    				s.append('t');
-    				break;
-    			case (int)GeneBankCreateBTree.CODE_G:
-    				s.append('g');
-    				break;
-    		}
-    	}
-    	return s.toString();
-    }
 }

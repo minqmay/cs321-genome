@@ -1,4 +1,4 @@
-import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -170,9 +170,7 @@ public class BTree{
     }
     public TreeObject search(BTreeNode x, long k){
         int i = 0;
-        System.out.println("searching for: " + k);
         TreeObject obj = new TreeObject(k);
-        System.out.println(x);
         while (i < x.getN() && (obj.compareTo(x.getKey(i)) > 0)){
             i++;
         }
@@ -189,7 +187,6 @@ public class BTree{
         }
     }
     public void inOrderPrint(BTreeNode n){
-        System.out.println(n);
         if (n.isLeaf() == true){
             for (int i = 0; i < n.getN(); i++){
                 System.out.println(n.getKey(i));
@@ -211,19 +208,20 @@ public class BTree{
      * @param writer FileWriter to write to
      * @throws IOException
      */
-    public void inOrderPrintToWriter(BTreeNode n,FileWriter writer) throws IOException {
+    public void inOrderPrintToWriter(BTreeNode n,PrintWriter writer, int sequenceLength) throws IOException {
+        GeneBankConvert gbc = new GeneBankConvert();
         for (int i = 0; i < n.getN(); i++){
-            writer.append(n.getKey(i).toDNAString());
-            writer.append('\n');
+            writer.print(n.getKey(i).getFrequency()+ " ");
+            writer.println(gbc.convertLongToString(n.getKey(i).getData(),sequenceLength));
         }
         if (!n.isLeaf()){
 	        for (int i = 0; i < n.getN() + 1; ++i){
 	            int offset = n.getChild(i);
 	            BTreeNode y = readNode(offset);
-	            inOrderPrintToWriter(y,writer);
+	            inOrderPrintToWriter(y,writer,sequenceLength);
 	            if (i < n.getN()) {
-	                writer.append(n.getKey(i).toDNAString());
-	                writer.append('\n');
+	                writer.print(n.getKey(i).getFrequency() + " ");
+                    writer.println(gbc.convertLongToString(n.getKey(i).getData(),sequenceLength));
 	            }
 	        }
         }
@@ -263,14 +261,14 @@ public class BTree{
             }
             
             // cache the node
-            if (cache != null) cache.add(n, offset);
+            //if (cache != null) cache.add(n, offset);
     }
     public BTreeNode readNode(int offset){
     	
     	BTreeNode y = null;
     	
     	// if node is cached, we can just read it from there
-        if (cache != null) y = cache.readNode(offset);
+        //if (cache != null) y = cache.readNode(offset);
         if (y != null) return y;
         
         y = new BTreeNode();
