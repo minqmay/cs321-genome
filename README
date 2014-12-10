@@ -1,0 +1,26 @@
+Explanation of the BTree file format:
+
+    First, the BTree writes its metadata to the disk. This metadata is the 
+degree of the BTree, the size of the BTreeNode, and the offset of the root node.
+There is a variable in the BTree that keeps track of where to insert which 
+increments each time a node is inserted. When each node is written, the BTree 
+writes the node's metadata first. The node's metadata is whether or not the node
+is a leaf, and its number of keys. Each BTreeNode holds on to a number of data:
+a LinkedList of child pointers (offsets in the file), a LinkedList of 
+TreeObjects, the offset of the parent and its own offset. The BTree writes the
+ node's parent (-1 for root, but it could be anything invalid). Then the BTree
+ alternates between writing a child pointer and an object. The first child 
+pointer (an int) is written, then the first object is written (the key (a long)
+followed by the frequency (an int)), then the second child pointer and the 
+second object are written, etc. until the last child pointer is written (All 
+internal nodes will have one more child than keys). The BTree just writes 
+zeroes in the unused places (although again, it could be any invalid number). 
+There are two scenarios to consider when writing the nodes to disk. The first 
+scenario is that we are splitting the root. When we split the root we are 
+getting three nodes from one node so we create a new node, move the last t-1 
+keys to it, move the medium key up to the new root, move children if the old 
+root wasn't a leaf node, then write the new node, the new root and the old root 
+to disk. The second scenario is that we are splitting a node that is
+not the root. We are only creating one new node. The new node gets the split 
+node's last t-1 keys. The parent of the split node gets its medium key. We move
+children if necessary then write the nodes back.
