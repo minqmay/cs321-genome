@@ -20,8 +20,7 @@ public class BTree{
         BTreeNodeSize = 32*degree-3;
         rootOffset = 12;
         placeToInsert = rootOffset + BTreeNodeSize;
-        this.degree = degree;
-        
+        this.degree = degree;        
         if (useCache) {
         	cache = new BTreeCache(cacheSize);
         }
@@ -33,10 +32,16 @@ public class BTree{
         x.setN(0);
         try {
             myfile = new File(fileName);
+            myfile.delete();
+            myfile.createNewFile();    
             raf = new RandomAccessFile(myfile, "rw");
         }
         catch (FileNotFoundException fnfe){
             System.err.println("file is corrupt or missing!");
+            System.exit(-1);
+        }
+        catch (IOException ioe){
+            System.err.println("IO Exception occurred!");
             System.exit(-1);
         }
         writeTreeMetadata();
